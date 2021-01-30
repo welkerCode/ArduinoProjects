@@ -5,6 +5,7 @@ Servo servo_horizontal;
 // twelve servo objects can be created on most boards
 
 // Pin layout
+int buzzer_pin = 6;
 int led_pin = 7;
 int servo_ver_pin = 8;
 int servo_hor_pin = 9;
@@ -40,14 +41,31 @@ int ver_pos [6] = {door_ver, median_ver, kennel_ver, bedroom_ver, couch_ver, flo
 
 char incoming_value = 0;
 
+void buzz_on(){
+    digitalWrite(buzzer_pin, HIGH);
+    delay(500);
+    digitalWrite(buzzer_pin, LOW);
+}
+
+void buzz_off(){
+    digitalWrite(buzzer_pin, HIGH);
+    delay(100);
+    digitalWrite(buzzer_pin, LOW);
+    delay(100);
+    digitalWrite(buzzer_pin, HIGH);
+    delay(100);
+    digitalWrite(buzzer_pin, LOW);
+}
 
 
 
 void setup() {
   servo_vertical.attach(servo_ver_pin);  // attaches the servo on pin 9 to the servo object
   servo_horizontal.attach(servo_hor_pin);
+  pinMode(buzzer_pin, OUTPUT);
   pinMode(led_pin, OUTPUT);
-  digitalWrite(led_pin, HIGH);
+  pinMode(buzzer_pin, HIGH);
+  digitalWrite(led_pin, LOW);
   Serial.begin(9600);
 }
 
@@ -57,6 +75,13 @@ void loop() {
     incoming_value = Serial.read();
     Serial.print(incoming_value);
     Serial.print("\n");
+
+    if (incoming_value == '1'){
+      buzz_on();
+    }
+    else{
+      buzz_off();
+    }
   }
 
   if(incoming_value == '1'){
@@ -75,6 +100,7 @@ void loop() {
 
   else{
     digitalWrite(led_pin, LOW);
+    digitalWrite(buzzer_pin, LOW);
   }
 
   // Get waypoints
