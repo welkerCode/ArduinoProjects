@@ -38,24 +38,44 @@ int hor_pos [6] = {door_hor, median_hor, kennel_hor, bedroom_hor, couch_hor, flo
 int ver_pos [6] = {door_ver, median_ver, kennel_ver, bedroom_ver, couch_ver, floor_ver};
 
 
+char incoming_value = 0;
+
+
+
 
 void setup() {
   servo_vertical.attach(servo_ver_pin);  // attaches the servo on pin 9 to the servo object
   servo_horizontal.attach(servo_hor_pin);
   pinMode(led_pin, OUTPUT);
   digitalWrite(led_pin, HIGH);
+  Serial.begin(9600);
 }
 
 void loop() {
 
-  iterator++;
-  if(iterator > (num_pos - 1)){
-    iterator = 0;
+  if(Serial.available() > 0){
+    incoming_value = Serial.read();
+    Serial.print(incoming_value);
+    Serial.print("\n");
   }
-  
-  servo_vertical.write(ver_pos[iterator]);
-  servo_horizontal.write(hor_pos[iterator]);
-  delay(wait_time);
+
+  if(incoming_value == '1'){
+
+    digitalWrite(led_pin, HIGH);
+
+    iterator++;
+    if(iterator > (num_pos - 1)){
+      iterator = 0;
+    }
+    
+    servo_vertical.write(ver_pos[iterator]);
+    servo_horizontal.write(hor_pos[iterator]);
+    delay(wait_time);
+  }
+
+  else{
+    digitalWrite(led_pin, LOW);
+  }
 
   // Get waypoints
   // Increment current_counter
